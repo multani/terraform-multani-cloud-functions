@@ -19,7 +19,7 @@ variable "bucket" {
 
 module "this" {
   source  = "multani/function/google//modules/code"
-  version = "1.0.1"
+  version = "1.0.2"
 
   source_dir = path.module
 
