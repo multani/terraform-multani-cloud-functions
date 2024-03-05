@@ -26,3 +26,14 @@ module "this" {
   name        = var.name
   bucket_name = var.bucket
 }
+
+output "bucket" {
+  description = "The bucket in which the function code is stored"
+  value       = module.this.bucket
+}
+
+output "object" {
+  description = "The bucket's object representing the function code"
+  value       = module.this.object
+}
+
