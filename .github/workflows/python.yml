@@ -1,0 +1,48 @@
+name: Python
+
+on:
+  push:
+    pull_requests:
+      - main
+
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        id: py
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-python-${{ steps.py.outputs.python-version }}-
+          path: |
+            ~/.cache/pypoetry/virtualenvs/
+            ~/.local/pipx/venvs/poetry/
+            .mypy_cache/
+
+      - name: Install poetry
+        run: pipx install --python '${{ steps.py.outputs.python-path }}' poetry
+
+      - name: Fetch dependencies
+        run: poetry install --with dev
+
+      - name: Test
+        run: poetry run pytest
+
+      - name: Check
+        run: make check
+
+      - name: mypy
+        run: make mypy

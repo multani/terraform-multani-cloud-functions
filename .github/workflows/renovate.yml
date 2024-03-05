@@ -1,0 +1,54 @@
+name: Renovate
+
+on:
+  push:
+    paths:
+      - pyproject.toml
+      - poetry.lock
+
+jobs:
+  rebuild:
+    name: Rebuild
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAT_GITHUB }}
+
+      - name: Setup Python
+        id: py
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache
+        uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-python-${{ steps.py.outputs.python-version }}-
+          path: |
+            ~/.cache/pypoetry/virtualenvs/
+            ~/.local/pipx/venvs/poetry/
+            .mypy_cache/
+
+      - name: Install poetry
+        run: pipx install --python '${{ steps.py.outputs.python-path }}' poetry
+
+      - name: Regenerate
+        run: make --always-make requirements.txt
+
+      - name: Commit and push
+        run: |
+          diff="$(git diff requirements.txt)"
+          if [ -n "$diff" ]
+          then
+            git diff requirements.txt
+            git config user.name "$(git log -n 1 --pretty=format:%an)"
+            git config user.email "$(git log -n 1 --pretty=format:%ae)"
+            git add requirements.txt
+            git commit -m "Update requirements.txt"
+            git push
+          else
+            echo "No changes detected on requirements.txt"
+          fi

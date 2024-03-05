@@ -1,0 +1,82 @@
+name: Lint
+
+on:
+  push:
+    pull_requests:
+      - main
+
+    branches:
+      - main
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        directory:
+          - ./
+          - ./modules/error-reporting-slack
+          - ./modules/terraform-cloud-trigger
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.4
+
+      - name: terraform init
+        run: terraform init -backend=false
+
+      - name: Formatting
+        run: terraform fmt -recursive -check -diff
+
+      - name: Validation
+        run: terraform validate
+
+  tflint:
+    name: TFLint
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        directory:
+          - ./
+          - ./modules/error-reporting-slack
+          - ./modules/terraform-cloud-trigger
+    defaults:
+      run:
+        working-directory: ${{ matrix.directory }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.4
+
+      - name: Terraform init
+        run: terraform init -backend=false
+
+      - name: Setup tflint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+          github_token: ${{ github.token }}
+          tflint_version: v0.50.3
+
+      - name: Init TFLint
+        run: tflint --init
+        env:
+          # https://github.com/terraform-linters/tflint/blob/master/docs/user-guide/plugins.md#avoiding-rate-limiting
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Run TFLint
+        run: tflint --format compact --module
