@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "subject": "Resolved error has reoccurred in test123 slack-error-reporting slack-error-reporting-00002-xef",
+  "group_info" : {
+    "project_id": "test123",
+    "detail_link": "https://console.cloud.google.com/errors/CI3AwuOAuK2QyQE?project=test123&time=P30D&utm_source=error-reporting-notification&utm_medium=webhook&utm_content=resolved-error"
+  },
+  "exception_info" : {
+    "type": "werkzeug.exceptions.BadRequest",
+    "message": "400 Bad Request: The browser (or proxy) sent a request that this server could not understand."
+  },
+  "event_info": {
+    "log_message": "Unable to parse JSON content\nTraceback (most recent call last):\n  File \"/layers/google.python.pip/pip/lib/python3.12/site-packages/werkzeug/wrappers/request.py\", line 611, in get_json\n    rv = self.json_module.loads(data)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/layers/google.python.pip/pip/lib/python3.12/site-packages/flask/json/provider.py\", line 187, in loads\n    return json.loads(s, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/layers/google.python.runtime/python/lib/python3.12/json/__init__.py\", line 346, in loads\n    return _default_decoder.decode(s)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/layers/google.python.runtime/python/lib/python3.12/json/decoder.py\", line 337, in decode\n    obj, end = self.raw_decode(s, idx=_w(s, 0).end())\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/layers/google.python.runtime/python/lib/python3.12/json/decoder.py\", line 353, in raw_decode\n    obj, end = self.scan_once(s, idx)\n               ^^^^^^^^^^^^^^^^^^^^^^\njson.decoder.JSONDecodeError: Invalid \\escape: line 10 column 17 (char 434)\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/layers/google.python.pip/pip/lib/python3.12/site-packages/flask/wrappers.py\", line 131, in on_json_loading_failed\n    return super().on_json_loading_failed(e)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/layers/google.python.pip/pip/lib/python3.12/site-packages/werkzeug/wrappers/request.py\", line 645, in on_json_loading_failed\n    raise BadRequest(f\"Failed to decode JSON object: {e}\")\nwerkzeug.exceptions.BadRequest: 400 Bad Request: Failed to decode JSON object: Invalid \\escape: line 10 column 17 (char 434)\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/workspace/multani/google/models.py\", line 45, in from_request\n    data = request.json\n           ^^^^^^^^^^^^\n  File \"/layers/google.python.pip/pip/lib/python3.12/site-packages/werkzeug/wrappers/request.py\", line 558, in json\n    return self.get_json()\n           ^^^^^^^^^^^^^^^\n  File \"/layers/google.python.pip/pip/lib/python3.12/site-packages/werkzeug/wrappers/request.py\", line 620, in get_json\n    rv = self.on_json_loading_failed(e)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/layers/google.python.pip/pip/lib/python3.12/site-packages/flask/wrappers.py\", line 136, in on_json_loading_failed\n    raise BadRequest() from e\nwerkzeug.exceptions.BadRequest: 400 Bad Request: The browser (or proxy) sent a request that this server could not understand.",
+    "request_method": "",
+    "request_url": "",
+    "referrer": "",
+    "user_agent": "",
+    "service": "slack-error-reporting",
+    "version": "slack-error-reporting-00002-xef",
+    "response_status": "0"
+  }
+}
+

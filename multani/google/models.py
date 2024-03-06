@@ -41,15 +41,12 @@ class ErrorReporting(BaseModel):
         if content_type != "application/json":
             raise ValueError(f"Invalid request content type: {content_type}")
 
-        try:
-            data = request.json
-        except:  # noqa: E722
-            LOGGER.exception("Unable to parse JSON content", payload=request.data)
-            raise ValueError("JSON content-type, but not able to parse JSON payload")
+        data = request.data
+        # Google doesn't always serialize the payload to JSON correctly...
+        data = data.replace(rb"\'", b"'")
 
         LOGGER.debug("Received an error", error=data)
-
-        return cls.model_validate(data)
+        return cls.model_validate_json(data)
 
 
 def is_test_notification(request: flask.Request) -> bool:
