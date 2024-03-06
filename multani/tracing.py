@@ -39,10 +39,12 @@ def get_tracer(name, trace=None):
 
 
 def build_exporter(uri):
+
+    exporter = NullSpanExporter()
     u = urlparse(uri)
 
     if u.scheme == "gcp":
-        return CloudTraceSpanExporter()
+        exporter = CloudTraceSpanExporter(resource_regex="service.*")
 
     elif u.scheme == "otel+grpc":
         if u.netloc == "":
@@ -50,14 +52,12 @@ def build_exporter(uri):
         else:
             endpoint = u.netloc
 
-        return OTLPSpanExporter(endpoint=endpoint, insecure=True)
+        exporter = OTLPSpanExporter(endpoint=endpoint, insecure=True)
     elif u.scheme == "console":
-        return ConsoleSpanExporter()
-    elif u.scheme == "null":
-        return NullSpanExporter()
-    else:
-        LOGGER.debug("Using the null tracing exporter")
-        return NullSpanExporter()
+        exporter = ConsoleSpanExporter()
+
+    LOGGER.debug("Tracing exporter configured", exporter=exporter)
+    return exporter
 
 
 def get_current_span():
@@ -75,12 +75,18 @@ def global_setup(exporter=None):
     service_name = os.environ.get("K_SERVICE", "functions")
     resource = Resource(attributes={SERVICE_NAME: service_name})
     tracer_provider = TracerProvider(resource=resource)
-    exporter = CloudTraceSpanExporter(resource_regex="service.*")
     tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
     trace.set_tracer_provider(tracer_provider)
 
     # Flask Telemetry
-    current_app.wsgi_app = OpenTelemetryMiddleware(current_app.wsgi_app)
+    try:
+        current_app.wsgi_app
+    except RuntimeError:
+        # We are not running in a Flask context, let's skip the initialization
+        # of the HTTP middleware in this case.
+        pass
+    else:
+        current_app.wsgi_app = OpenTelemetryMiddleware(current_app.wsgi_app)
 
     # httpx telemetry
     HTTPXClientInstrumentor().instrument()

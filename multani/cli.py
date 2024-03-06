@@ -24,15 +24,20 @@ def validate_tracing(ctx, param, value):
     callback=validate_tracing,
 )
 def cli(trace_exporter):
-    tracing.setup(trace_exporter)
+    tracing.global_setup(trace_exporter)
 
 
 @cli.command()
+@click.argument("org_name")
 @click.option("--token", help="The Terraform Cloud authentication token,")
-@click.option("--organization", help="The Terraform Cloud organization", required=True)
 @click.option("--include", help="Tags to include", multiple=True)
 @click.option("--exclude", help="Tags to exclude", multiple=True)
-def terraform_cloud_trigger_all(organization, include, exclude, token):
+def terraform_cloud_trigger_all(org_name, include, exclude, token):
+    """Start new runs in the workspaces of a Terraform Cloud organization.
+
+    ORG_NAME is the name (not the ID) of the Terraform Cloud organization.
+    """
+
     if token is None:
         with open(expanduser("~/.terraform.d/credentials.tfrc.json")) as fp:
             data = json.load(fp)
@@ -41,7 +46,7 @@ def terraform_cloud_trigger_all(organization, include, exclude, token):
 
     http = httpx.AsyncClient()
     tfcloud = TerraformCloud(http, token)
-    task = tfcloud.trigger_all(organization, include, exclude)
+    task = tfcloud.trigger_all(org_name, include, exclude)
 
     asyncio.run(task)
 
