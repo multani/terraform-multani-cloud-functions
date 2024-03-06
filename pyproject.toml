@@ -31,6 +31,7 @@ flask = "3.0.2"
 isort = "5.13.2"
 mypy = "1.8.0"
 pytest = "8.0.2"
+pytest-cov = "4.1.0"
 ruff = "0.3.0"
 
 [build-system]
@@ -50,6 +51,10 @@ force_single_line = true
 
 [tool.pytest.ini_options]
 addopts = """
+--cov multani
+--cov-branch
+--cov-report html
+--cov-report term
 --doctest-modules
 --tb short
 --verbose
