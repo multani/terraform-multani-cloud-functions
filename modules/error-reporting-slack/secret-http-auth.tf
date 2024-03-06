@@ -7,7 +7,8 @@ resource "google_secret_manager_secret" "http_auth" {
 }
 
 resource "random_password" "http_auth" {
-  length = 32
+  length  = 64
+  special = false
 }
 
 resource "google_secret_manager_secret_version" "http_auth" {
