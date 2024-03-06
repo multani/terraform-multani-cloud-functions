@@ -109,32 +109,3 @@ def log_exception(logger, *exceptions):
         return with_logger
 
     return wrapper
-
-
-def log_exceptions_group(logger, group):
-    """
-
-    >>> configure(format="test")
-    >>> logger = structlog.get_logger()
-
-    >>> async def f(i):
-    ...     if i % 2 == 0:
-    ...         raise ValueError(f"{i}")
-
-    >>> async def run():
-    ...     t = []
-    ...     for i in range(4):
-    ...         t.append(asyncio.create_task(f(i)))
-    ...
-    ...     res = await asyncio.gather(*t, return_exceptions=True)
-    ...     log_exceptions_group(logger, res)
-
-    >>> asyncio.run(run())
-    event="ValueError('0')" level='error'
-    event="ValueError('2')" level='error'
-
-    """
-
-    for entry in group:
-        if isinstance(entry, BaseException):
-            logger.error(repr(entry))
