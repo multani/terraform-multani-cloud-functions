@@ -14,6 +14,7 @@ from flask.typing import ResponseReturnValue
 from multani import secrets
 from multani import tracing
 from multani.google.models import ErrorReporting
+from multani.google.models import is_test_notification
 from multani.http import check_authorization
 from multani.slack import SlackClient
 from multani.tfcloud import TerraformCloud
@@ -69,28 +70,23 @@ def error_reporting_slack(request: Request) -> ResponseReturnValue:
 
     logger.debug("HTTP request", headers=request.headers, data=request.data)
 
-    content_type = request.headers["content-type"]
-    if content_type != "application/json":
-        logger.critical(
-            f"Expected `application/json` content-type, got: `{content_type}`"
-        )
-        abort(400)
-
     token = secrets.fetch_secret_from_env("SECRET_SLACK_API_TOKEN")
     client = SlackClient(token)
 
-    if (
-        request.json is not None and request.json["version"] == "test"
-    ):  # testing the webhook
-        # The payload when called for testing is an Incident object, not an
-        # Error Reporting object.
-        logger.info("Received a test notification")
-        text = "Testing the notification channel :wave:"
-        client.post_message(channel_id, text=text, icon_emoji="📞")
-        return ("OK", 200)
-
     with tracer.start_as_current_span("Error Reporting: parse"):
-        error = ErrorReporting.from_request(request)
+        try:
+            error = ErrorReporting.from_request(request)
+        except:  # Try to parse it as a test notification?
+            if not is_test_notification(request):
+                raise
+
+            # The webhook is being tested ...
+            # The payload used during the test notification is an Incident
+            # object, not an Error Reporting object...
+            logger.info("Received a test notification")
+            text = "Testing the notification channel :wave:"
+            client.post_message(channel_id, text=text, icon_emoji="📞")
+            return ("OK", 200)
 
     blocks: list[dict[Any, Any]] = [
         {

@@ -1,0 +1,60 @@
+{
+  "incident": {
+    "apigee_url": "http://www.example.com",
+    "condition": {
+      "conditionThreshold": {
+        "comparison": "COMPARISON_GT",
+        "duration": "0s",
+        "filter": "metric.type=\"test.googleapis.com/metric\" resource.type=\"example_resource\"",
+        "thresholdValue": 0.5,
+        "trigger": {
+          "count": 1
+        }
+      },
+      "displayName": "Example condition",
+      "name": "projects/12345/alertPolicies/12345/conditions/12345"
+    },
+    "condition_name": "Example condition",
+    "documentation": "Test documentation",
+    "ended_at": 0,
+    "incident_id": "12345",
+    "metadata": {
+      "system_labels": {
+        "example": "label"
+      },
+      "user_labels": {
+        "example": "label"
+      }
+    },
+    "metric": {
+      "displayName": "Test Metric",
+      "labels": {
+        "example": "label"
+      },
+      "type": "test.googleapis.com/metric"
+    },
+    "observed_value": "1.0",
+    "policy_name": "projects/12345/alertPolicies/12345",
+    "policy_user_labels": {
+      "example": "label"
+    },
+    "resource": {
+      "labels": {
+        "example": "label"
+      },
+      "type": "example_resource"
+    },
+    "resource_display_name": "Example Resource",
+    "resource_id": "12345",
+    "resource_name": "projects/12345/example_resources/12345",
+    "resource_type_display_name": "Example Resource Type",
+    "scoping_project_id": "12345",
+    "scoping_project_number": 12345,
+    "started_at": 0,
+    "state": "OPEN",
+    "summary": "Test Incident",
+    "threshold_value": "0.5",
+    "url": "http://www.example.com"
+  },
+  "version": "test"
+}

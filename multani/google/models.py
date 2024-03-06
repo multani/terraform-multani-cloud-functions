@@ -1,3 +1,4 @@
+from typing import Literal
 from typing import Self
 
 import flask
@@ -41,6 +42,29 @@ class ErrorReporting(BaseModel):
         if content_type != "application/json":
             raise ValueError(f"Invalid request content type: {content_type}")
 
-        LOGGER.debug("Received an error", error=request.json)
+        try:
+            data = request.json
+        except:
+            LOGGER.exception("Unable to parse JSON content", payload=request.data)
+            raise ValueError(f"JSON content-type, but not able to parse JSON payload")
 
-        return cls.model_validate_json(request.data)
+        LOGGER.debug("Received an error", error=data)
+
+        return cls.model_validate(data)
+
+
+def is_test_notification(request: flask.Request) -> bool:
+    """Is the notification received in the request a "test" notification?
+
+    A "test" notification is sent when the webhook is being tested by GCP.
+
+    In this case, the webhook receives a payload where the content if an
+    Incident object and the `version` field is set to "test".
+
+    Anything is *not* considered a test notification.
+    """
+
+    try:
+        return request.json is not None and request.json.get("version") == "test"
+    except:
+        return False
