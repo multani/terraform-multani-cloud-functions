@@ -9,4 +9,3 @@ tracing.global_setup()
 
 error_reporting_slack = functions.error_reporting_slack
 trigger_all_handler = functions.trigger_all_handler
-trigger_single_handler = functions.trigger_single_handler

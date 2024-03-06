@@ -48,36 +48,6 @@ def trigger_all_handler(event, context):
         asyncio.run(task)
 
 
-def trigger_single_handler(event, context):
-    tracer = tracing.get_tracer(__name__)
-    logger = LOGGER.bind(function="trigger_single_handler")
-
-    logger.info("Fetching parameters from event")
-    data = json.loads(urlsafe_b64decode(event["data"]).decode("utf-8"))
-
-    if "org" not in data:
-        raise ValueError("must pass an 'org' as input")
-
-    if "workspace" not in data:
-        raise ValueError("must pass an 'org' as input")
-
-    if "secret_name" not in data:
-        raise ValueError("must pass a 'secret_name' as input")
-
-    org = data["org"]
-    workspace_name = data["workspace_name"]
-    workspace_id = data["workspace_id"]
-
-    secret_name = data["secret_name"]
-    token = secrets.fetch_secret(secret_name)
-
-    with tracer.start_as_current_span("func: trigger single"):
-        http = httpx.AsyncClient()
-        tfcloud = TerraformCloud(http, token)
-        task = tfcloud.workspace_create_run(org, workspace_name, workspace_id)
-        asyncio.run(task)
-
-
 # https://api.slack.com/apps/A069JJT5QMS/
 @functions_framework.http
 def error_reporting_slack(request: Request) -> ResponseReturnValue:
