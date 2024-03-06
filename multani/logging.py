@@ -90,22 +90,3 @@ def loop_error_handler_installer():
 
     loop = asyncio.get_running_loop()
     loop.set_exception_handler(asyncio_exception_handler)
-
-
-def log_exception(logger, *exceptions):
-    """Log an exception from a coroutine"""
-
-    if len(exceptions) == 0:
-        exceptions = (BaseException,)
-
-    def wrapper(f):
-        async def with_logger(*args, **kwargs):
-            try:
-                return await f(*args, **kwargs)
-            except exceptions as exc:
-                logger.exception(f"Error running '{f}'", exception=exc)
-                raise
-
-        return with_logger
-
-    return wrapper

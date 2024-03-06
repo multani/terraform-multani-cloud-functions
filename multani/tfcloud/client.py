@@ -4,7 +4,6 @@ import httpx
 import structlog
 
 from ..http import check_status_json
-from ..logging import log_exception
 from ..tracing import get_tracer
 from .models import ListWorkspacesResponse
 from .models import RunCreateRequest
@@ -41,10 +40,14 @@ class TerraformCloud:
 
             http_limiter = asyncio.Semaphore(3)
 
-            @log_exception(self.logger)
             async def trigger(org: str, name: str, id: str) -> None:
-                async with http_limiter:
-                    await self.workspace_create_run(org, name, id)
+                logger = self.logger.bind(org=org, workspace=name, workspace_id=id)
+                try:
+                    async with http_limiter:
+                        await self.workspace_create_run(org, name, id)
+                except Exception as exc:
+                    logger.exception("Error while creating workspace run")
+                    raise
 
             awaitables = [trigger(org, ws.attributes.name, ws.id) for ws in workspaces]
             results = await asyncio.gather(*awaitables, return_exceptions=True)
