@@ -20,7 +20,7 @@ from . import functions_framework
 LOGGER = structlog.get_logger()
 
 
-def trigger_all_handler(event, context):
+def terraform_cloud_trigger_all(event, context):
     tracer = tracing.get_tracer(__name__)
     logger = LOGGER.bind(function="trigger_all_handler")
 

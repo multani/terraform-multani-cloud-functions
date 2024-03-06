@@ -8,4 +8,4 @@ logging.configure()
 tracing.global_setup()
 
 error_reporting_slack = functions.error_reporting_slack
-trigger_all_handler = functions.trigger_all_handler
+terraform_cloud_trigger_all = functions.terraform_cloud_trigger_all

@@ -7,7 +7,7 @@ module "this" {
 
   location    = var.location
   runtime     = "python312"
-  entry_point = "trigger_all_handler"
+  entry_point = "terraform_cloud_trigger_all"
 
   source_code = {
     bucket = var.source_code.bucket
