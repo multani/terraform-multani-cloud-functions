@@ -1,7 +1,5 @@
 import asyncio
-import json
 import os
-from base64 import urlsafe_b64decode
 from typing import Any
 
 import httpx
@@ -20,6 +18,7 @@ from multani.slack import SlackClient
 from multani.tfcloud import TerraformCloud
 
 from . import functions_framework
+from .models import TerraformCloudTriggerAllRequest
 
 LOGGER = structlog.get_logger()
 
@@ -30,26 +29,18 @@ def terraform_cloud_trigger_all(event: CloudEvent) -> None:
     logger = LOGGER.bind(function="trigger_all_handler")
 
     logger.info("Fetching parameters from event")
-    data = json.loads(urlsafe_b64decode(event["data"]).decode("utf-8"))
 
-    if "organization" not in data:
-        raise ValueError("must pass an 'organization' as input")
-
-    organization = data["organization"]
-
-    included = data.get("tags_included", [])
-    excluded = data.get("tags_excluded", [])
-
-    if "secret_name" not in data:
-        raise ValueError("must pass a 'secret_name' as input")
-
-    secret_name = data["secret_name"]
-    token = secrets.fetch_secret(secret_name)
+    request = TerraformCloudTriggerAllRequest.from_cloud_event(event)
+    token = secrets.fetch_secret(request.secret_name)
 
     with tracer.start_as_current_span("func: trigger all"):
         http = httpx.AsyncClient()
         tfcloud = TerraformCloud(http, token)
-        task = tfcloud.trigger_all(organization, included, excluded)
+        task = tfcloud.trigger_all(
+            request.organization,
+            request.tags_included,
+            request.tags_excluded,
+        )
         asyncio.run(task)
 
 
