@@ -11,7 +11,7 @@ from flask.typing import ResponseReturnValue
 
 from multani import secrets
 from multani import tracing
-from multani.models import ErrorReporting
+from multani.google.models import ErrorReporting
 from multani.slack import SlackClient
 from multani.tfcloud import TerraformCloud
 
