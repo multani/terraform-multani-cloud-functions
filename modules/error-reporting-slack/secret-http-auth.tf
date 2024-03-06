@@ -7,7 +7,8 @@ resource "google_secret_manager_secret" "http_auth" {
 }
 
 resource "random_password" "http_auth" {
-  length  = 64
+  length = 64
+  # Make it simpler to pass it through an URL
   special = false
 }
 

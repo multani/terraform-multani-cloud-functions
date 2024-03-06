@@ -59,7 +59,7 @@ addopts = """
 --tb short
 --verbose
 """
-testpaths = ["multani"]
+testpaths = ["multani", "tests"]
 filterwarnings = [
     # https://github.com/googleapis/python-api-common-protos/issues/189
     'ignore:Type google\.:DeprecationWarning',

@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 from base64 import urlsafe_b64decode
 from typing import Any
 
@@ -7,11 +8,13 @@ import httpx
 import structlog
 from flask import Request
 from flask import Response
+from flask import abort
 from flask.typing import ResponseReturnValue
 
 from multani import secrets
 from multani import tracing
 from multani.google.models import ErrorReporting
+from multani.http import check_authorization
 from multani.slack import SlackClient
 from multani.tfcloud import TerraformCloud
 
@@ -55,9 +58,13 @@ def error_reporting_slack(request: Request) -> ResponseReturnValue:
     tracer = tracing.get_tracer(__name__)
     logger = LOGGER.bind(function="error_reporting_slack")
 
-    expected_auth_token = secrets.fetch_secret_from_env("SECRET_HTTP_AUTH_TOKEN")
-    if request.args.get("auth_token") != expected_auth_token:
-        return Response("Forbidden", 403)
+    logger.debug(
+        "HTTP request", headers=request.headers, data=request.data, args=request.args
+    )
+
+    username = os.environ["HTTP_AUTH_USERNAME"]
+    password = secrets.fetch_secret_from_env("SECRET_HTTP_AUTH_PASSWORD")
+    check_authorization(request, username, password)
 
     logger.debug("HTTP request", headers=request.headers, data=request.data)
 
@@ -66,7 +73,7 @@ def error_reporting_slack(request: Request) -> ResponseReturnValue:
         logger.critical(
             f"Expected `application/json` content-type, got: `{content_type}`"
         )
-        return Response("Invalid", 400)
+        abort(400)
 
     token = secrets.fetch_secret_from_env("SECRET_SLACK_API_TOKEN")
     client = SlackClient(token)

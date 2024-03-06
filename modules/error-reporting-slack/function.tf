@@ -15,8 +15,9 @@ module "this" {
   }
 
   environment_variables = {
-    LOG_FORMAT             = "gcp"
-    SECRET_SLACK_API_TOKEN = "${google_secret_manager_secret.slack.name}/versions/latest"
-    SECRET_HTTP_AUTH_TOKEN = google_secret_manager_secret_version.http_auth.name
+    LOG_FORMAT                = "gcp"
+    SECRET_SLACK_API_TOKEN    = "${google_secret_manager_secret.slack.name}/versions/latest"
+    SECRET_HTTP_AUTH_PASSWORD = google_secret_manager_secret_version.http_auth.name
+    HTTP_AUTH_USERNAME        = local.http_auth_username
   }
 }
