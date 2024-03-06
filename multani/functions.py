@@ -54,7 +54,8 @@ def terraform_cloud_trigger_all(event, context):
 # https://api.slack.com/apps/A069JJT5QMS/
 @functions_framework.http
 def error_reporting_slack(request: Request) -> ResponseReturnValue:
-    channel_id = "C04U6S229S4"
+    channel_id = os.environ["SLACK_CHANNEL_ID"]
+
     tracer = tracing.get_tracer(__name__)
     logger = LOGGER.bind(function="error_reporting_slack")
 

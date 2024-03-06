@@ -22,3 +22,8 @@ variable "slack_token" {
   type        = string
   sensitive   = true
 }
+
+variable "slack_channel_id" {
+  description = "The Slack channel ID to report errors to"
+  type        = string
+}
