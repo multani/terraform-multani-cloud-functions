@@ -1,4 +1,3 @@
-from typing import Literal
 from typing import Self
 
 import flask
@@ -44,9 +43,9 @@ class ErrorReporting(BaseModel):
 
         try:
             data = request.json
-        except:
+        except:  # noqa: E722
             LOGGER.exception("Unable to parse JSON content", payload=request.data)
-            raise ValueError(f"JSON content-type, but not able to parse JSON payload")
+            raise ValueError("JSON content-type, but not able to parse JSON payload")
 
         LOGGER.debug("Received an error", error=data)
 
@@ -66,5 +65,5 @@ def is_test_notification(request: flask.Request) -> bool:
 
     try:
         return request.json is not None and request.json.get("version") == "test"
-    except:
+    except:  # noqa: E722
         return False

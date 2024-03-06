@@ -2,7 +2,6 @@ from typing import Generator
 
 import pytest
 from flask import Flask
-from flask import Request
 from flask import request
 from flask.testing import FlaskClient
 

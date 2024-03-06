@@ -39,7 +39,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.ruff]
-ignore = [
+lint.ignore = [
     # It's OK to have long line
     "E501",
 ]

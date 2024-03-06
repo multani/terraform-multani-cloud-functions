@@ -1,6 +1,6 @@
 DIRECTORIES = \
-	. \
-	multani
+	multani \
+	tests
 
 requirements.txt: pyproject.toml poetry.lock
 	poetry -V

@@ -45,7 +45,7 @@ class TerraformCloud:
                 try:
                     async with http_limiter:
                         await self.workspace_create_run(org, name, id)
-                except Exception as exc:
+                except Exception:
                     logger.exception("Error while creating workspace run")
                     raise
 

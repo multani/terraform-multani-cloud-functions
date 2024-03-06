@@ -9,7 +9,6 @@ import structlog
 from cloudevents.http.event import CloudEvent
 from flask import Request
 from flask import Response
-from flask import abort
 from flask.typing import ResponseReturnValue
 
 from multani import secrets
@@ -78,7 +77,7 @@ def error_reporting_slack(request: Request) -> ResponseReturnValue:
     with tracer.start_as_current_span("Error Reporting: parse"):
         try:
             error = ErrorReporting.from_request(request)
-        except:  # Try to parse it as a test notification?
+        except:  # Try to parse it as a test notification? # noqa: E722
             if not is_test_notification(request):
                 raise
 
