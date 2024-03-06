@@ -6,6 +6,7 @@ from typing import Any
 
 import httpx
 import structlog
+from cloudevents.http.event import CloudEvent
 from flask import Request
 from flask import Response
 from flask import abort
@@ -24,7 +25,8 @@ from . import functions_framework
 LOGGER = structlog.get_logger()
 
 
-def terraform_cloud_trigger_all(event, context):
+@functions_framework.cloud_event
+def terraform_cloud_trigger_all(event: CloudEvent) -> None:
     tracer = tracing.get_tracer(__name__)
     logger = LOGGER.bind(function="trigger_all_handler")
 

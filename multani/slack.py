@@ -21,7 +21,7 @@ class SlackClient:
 
     def post_message(
         self,
-        channel_id,
+        channel_id: str,
         blocks: str | Sequence[dict[Any, Any] | Block] | None = None,
         text: str | None = None,
         icon_emoji: str | None = None,

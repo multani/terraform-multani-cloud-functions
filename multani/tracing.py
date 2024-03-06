@@ -19,32 +19,21 @@ from opentelemetry.sdk.trace.export import SpanExporter
 
 LOGGER = structlog.get_logger()
 
-TRACE = None
-
 
 class NullSpanExporter(SpanExporter):
     pass
 
 
-def get_tracer(name, trace=None):
-    if trace is None:
-        global TRACE
-        trace = TRACE
-
-    if trace is None:
-        raise RuntimeError("tracing is not enabled yet")
-
-    tracer = trace.get_tracer(name)
-    return tracer
+def get_tracer(name: str) -> trace.Tracer:
+    return trace.get_tracer(name)
 
 
-def build_exporter(uri):
-
-    exporter = NullSpanExporter()
+def build_exporter(uri: str) -> SpanExporter:
+    exporter: SpanExporter = NullSpanExporter()
     u = urlparse(uri)
 
     if u.scheme == "gcp":
-        exporter = CloudTraceSpanExporter(resource_regex="service.*")
+        exporter = CloudTraceSpanExporter(resource_regex="service.*")  # type: ignore[no-untyped-call]
 
     elif u.scheme == "otel+grpc":
         if u.netloc == "":
@@ -60,11 +49,11 @@ def build_exporter(uri):
     return exporter
 
 
-def get_current_span():
+def get_current_span() -> trace.span.Span:
     return trace.get_current_span()
 
 
-def global_setup(exporter=None):
+def global_setup(exporter: SpanExporter | None = None) -> None:
     logger = LOGGER.bind(kind="setup-otel")
     logger.debug("Setting up tracing")
 
@@ -86,12 +75,9 @@ def global_setup(exporter=None):
         # of the HTTP middleware in this case.
         pass
     else:
-        current_app.wsgi_app = OpenTelemetryMiddleware(current_app.wsgi_app)
+        current_app.wsgi_app = OpenTelemetryMiddleware(current_app.wsgi_app)  # type: ignore[no-untyped-call,method-assign]
 
     # httpx telemetry
     HTTPXClientInstrumentor().instrument()
-
-    global TRACE
-    TRACE = trace
 
     logger.debug("Tracing setup complete")

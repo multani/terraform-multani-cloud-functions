@@ -4,12 +4,15 @@ from os.path import expanduser
 
 import click
 import httpx
+from opentelemetry.sdk.trace.export import SpanExporter
 
 from . import tracing
 from .tfcloud import TerraformCloud
 
 
-def validate_tracing(ctx, param, value):
+def validate_tracing(
+    ctx: click.Context, param: click.Parameter, value: str
+) -> SpanExporter:
     try:
         return tracing.build_exporter(value)
     except ValueError as exc:
@@ -23,16 +26,21 @@ def validate_tracing(ctx, param, value):
     default="",
     callback=validate_tracing,
 )
-def cli(trace_exporter):
+def cli(trace_exporter: SpanExporter) -> None:
     tracing.global_setup(trace_exporter)
 
 
 @cli.command()
 @click.argument("org_name")
-@click.option("--token", help="The Terraform Cloud authentication token,")
+@click.option("--token", help="The Terraform Cloud authentication token")
 @click.option("--include", help="Tags to include", multiple=True)
 @click.option("--exclude", help="Tags to exclude", multiple=True)
-def terraform_cloud_trigger_all(org_name, include, exclude, token):
+def terraform_cloud_trigger_all(
+    org_name: str,
+    include: list[str],
+    exclude: list[str],
+    token: str,
+) -> None:
     """Start new runs in the workspaces of a Terraform Cloud organization.
 
     ORG_NAME is the name (not the ID) of the Terraform Cloud organization.
@@ -51,5 +59,5 @@ def terraform_cloud_trigger_all(org_name, include, exclude, token):
     asyncio.run(task)
 
 
-def main():
+def main() -> None:
     cli()

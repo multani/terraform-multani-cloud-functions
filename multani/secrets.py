@@ -11,7 +11,7 @@ LOGGER = structlog.get_logger()
 _CACHED_SECRETS: dict[str, str] = {}
 
 
-def fetch_secret(secret_name: str):
+def fetch_secret(secret_name: str) -> str:
     logger = LOGGER.bind(secret=secret_name)
     tracer = get_tracer(__name__)
 

@@ -69,4 +69,5 @@ filterwarnings = [
 ]
 
 [tool.mypy]
-packages = ["multani"]
+packages = ["multani", "tests"]
+strict = true

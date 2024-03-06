@@ -1,12 +1,13 @@
-from pydantic import ValidationError
-import pytest
 import os.path
 from pathlib import Path
 
+import pytest
 from flask import Request
+from pydantic import ValidationError
 from werkzeug.test import EnvironBuilder
 
-from multani.google.models import ErrorReporting, is_test_notification
+from multani.google.models import ErrorReporting
+from multani.google.models import is_test_notification
 
 FIXTURES = Path(os.path.abspath(__file__)).parent / "fixtures"
 

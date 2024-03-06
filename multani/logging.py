@@ -13,9 +13,14 @@ from structlog.processors import StackInfoRenderer
 from structlog.processors import TimeStamper
 from structlog.processors import UnicodeDecoder
 from structlog.processors import format_exc_info
+from structlog.typing import EventDict
+from structlog.typing import Processor
+from structlog.typing import WrappedLogger
 
 
-def format_kwargs(logger, method_name, event_dict):
+def format_kwargs(
+    logger: WrappedLogger, method_name: str, event_dict: EventDict
+) -> EventDict:
     try:
         msg = event_dict["event"].format(**event_dict)
     except KeyError:
@@ -32,11 +37,11 @@ def format_kwargs(logger, method_name, event_dict):
     return event_dict
 
 
-def configure(*, format: str | None = "gcp"):
+def configure(*, format: str | None = "gcp") -> None:
     if format is None:
         format = os.getenv("LOG_FORMAT")
 
-    processors = [
+    processors: list[Processor] = [
         # format the log message from the keyword arguments
         format_kwargs,
     ]
@@ -73,7 +78,7 @@ def configure(*, format: str | None = "gcp"):
     structlog.configure(processors=processors, cache_logger_on_first_use=True)
 
 
-def loop_error_handler_installer():
+def loop_error_handler_installer() -> None:
     """Configure the asyncio loop error handler.
 
     See: https://docs.python.org/3/library/asyncio-eventloop.html#error-handling-api
@@ -81,7 +86,9 @@ def loop_error_handler_installer():
     This should be called from within a coroutine, while a loop is running.
     """
 
-    def asyncio_exception_handler(loop, context):
+    def asyncio_exception_handler(
+        loop: asyncio.AbstractEventLoop, context: dict[str, Any]
+    ) -> None:
         """Log the uncaught exceptions from asyncio"""
 
         logger = structlog.get_logger("asyncio")
