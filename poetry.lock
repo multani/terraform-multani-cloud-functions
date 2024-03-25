@@ -434,13 +434,13 @@ requests = ["requests (>=2.20.0,<3.0.0.dev0)"]
 
 [[package]]
 name = "google-cloud-secret-manager"
-version = "2.18.3"
+version = "2.19.0"
 description = "Google Cloud Secret Manager API client library"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-cloud-secret-manager-2.18.3.tar.gz", hash = "sha256:1db2f409324536e34f985081d389e3974ca3a3668df7845cad0be03ab8c0fa7d"},
-    {file = "google_cloud_secret_manager-2.18.3-py2.py3-none-any.whl", hash = "sha256:4d4af82bddd9099ebdbe79e0c6b68f6c6cabea8323a3c1275bcead8f56310fb7"},
+    {file = "google-cloud-secret-manager-2.19.0.tar.gz", hash = "sha256:bb918435835a14eb94785f4d4d9087bdcf1b6de306432d7edaa7d62e7f780c30"},
+    {file = "google_cloud_secret_manager-2.19.0-py2.py3-none-any.whl", hash = "sha256:7dd9ad9ab3e70f9a7fbac432938b702ba23bce1207e9bda86463b6d6b1f5cdbb"},
 ]
 
 [package.dependencies]
@@ -1655,4 +1655,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "fed3b468e91aa8f3bd49f40e27281c763a67418aea69535092f55f214de45a1e"
+content-hash = "9f9d133e462512fb93de1652e0c85e5626d265a26f776470e08161d7da67174d"
